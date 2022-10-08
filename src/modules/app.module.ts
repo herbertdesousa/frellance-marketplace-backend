@@ -1,12 +1,19 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+
+import { ConfigModule } from '@nestjs/config';
 
 import { PrismaModule } from 'src/common/services/prisma/prisma.module';
+import { DecodeFirebaseTokenMiddleware } from 'src/common/middlewares/decodeFirebaseToken';
 
 import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [PrismaModule, UserModule],
+  imports: [ConfigModule.forRoot(), PrismaModule, UserModule],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes('users');
+  }
+}

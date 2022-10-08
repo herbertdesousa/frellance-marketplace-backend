@@ -11,11 +11,15 @@ datasource db {
 }
 
 model User {
-  id           String         @id() @default(uuid())
-  uid          String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  UserContacts UserContacts[]
+  id                             String                           @id() @default(uuid())
+  uid                            String
+  name                           String?
+  picture                        String?
+  signInMethod                   String
+  createdAt                      DateTime                         @default(now())
+  updatedAt                      DateTime                         @updatedAt
+  UserContacts                   UserContacts[]
+  UserNotificationOnChatMessages UserNotificationOnChatMessages[]
 }
 
 model UserContacts {
@@ -32,4 +36,13 @@ enum ContactType {
   email
   whatsapp
   phone
+}
+
+model UserNotificationOnChatMessages {
+  id        String   @id() @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  value     Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
 }

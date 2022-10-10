@@ -8,7 +8,7 @@ import {
 } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma/prisma.service';
 
-interface UserFormatted extends User {
+export interface EntireUser extends User {
   contacts: UserContacts[];
   notificationOnChatMessages: boolean;
 }
@@ -18,7 +18,7 @@ const fromUserToUserFormatted = (
     UserContacts: UserContacts[];
     UserNotificationOnChatMessages: UserNotificationOnChatMessages[];
   },
-): UserFormatted => {
+): EntireUser => {
   const { UserContacts, UserNotificationOnChatMessages, ...rest } = user;
 
   return {
@@ -36,16 +36,18 @@ export class UserService {
     return await this.prisma.user.create({ data: payload });
   }
 
-  async findEntireUserByUid(uid: string): Promise<UserFormatted> {
+  async findEntireUserByUid(uid: string): Promise<EntireUser | undefined> {
     const user = await this.prisma.user.findFirst({
       where: { uid },
       include: { UserContacts: true, UserNotificationOnChatMessages: true },
     });
 
+    if (!user) return;
+
     return fromUserToUserFormatted(user);
   }
 
-  async findUserByUid(uid: string): Promise<User> {
+  async findUserByUid(uid: string): Promise<User | undefined> {
     return await this.prisma.user.findFirst({
       where: { uid },
     });

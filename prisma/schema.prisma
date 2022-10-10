@@ -12,6 +12,7 @@ datasource db {
 
 model User {
   uid                            String                           @unique @default(uuid())
+  email                          String                           @unique
   name                           String?
   picture                        String?
   signInMethod                   String

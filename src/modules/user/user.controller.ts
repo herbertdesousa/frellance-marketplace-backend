@@ -14,21 +14,23 @@ import {
 import { User, UserNotificationOnChatMessages } from '@prisma/client';
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 
-import { UserService } from './user.service';
+import { EntireUser, UserService } from './user.service';
 
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post('sign-up')
-  async registerUser(@Body('user') user: FirebaseUserDto): Promise<User> {
-    if (await this.userService.findUserByUid(user.uid))
-      throw new ConflictException({ message: 'user already registered' });
+  @Post()
+  async auth(@Body('user') user: FirebaseUserDto): Promise<EntireUser> {
+    if (await this.userService.findUserByUid(user.uid)) {
+      return await this.userService.findEntireUserByUid(user.uid);
+    }
 
     const newUser = await this.userService.createUser({
       uid: user.uid,
       signInMethod: user.sign_in_provider,
       name: user.name,
+      email: user.email,
       picture: user.picture,
       UserContacts: {
         create: [
@@ -46,17 +48,6 @@ export class UserController {
     const entireUser = await this.userService.findEntireUserByUid(newUser.uid);
 
     return entireUser;
-  }
-
-  @Get()
-  async findUser(@Body('user') user: FirebaseUserDto): Promise<User> {
-    try {
-      const entireUser = await this.userService.findEntireUserByUid(user.uid);
-
-      return entireUser;
-    } catch (err) {
-      throw new NotFoundException({ message: 'user not found' });
-    }
   }
 
   @Patch('name')

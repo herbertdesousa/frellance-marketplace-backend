@@ -20,6 +20,7 @@ model User {
   updatedAt                      DateTime                         @updatedAt
   UserContacts                   UserContacts[]
   UserNotificationOnChatMessages UserNotificationOnChatMessages[]
+  Items                          Items[]
 }
 
 model UserContacts {
@@ -45,4 +46,100 @@ model UserNotificationOnChatMessages {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
+}
+
+model Items {
+  id          String     @id() @default(uuid())
+  name        String
+  description String
+  user        User       @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  userId      String
+  category    Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  ItemPicture         ItemPicture[]
+  ItemAttributeValues ItemAttributeValues[]
+}
+
+model ItemPicture {
+  id        String   @id() @default(uuid())
+  url       String
+  item      Items    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Categories {
+  id        String   @id() @default(uuid())
+  name      String   @unique
+  img_url   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Items             Items[]
+  CategoryAttribute CategoryAttribute[]
+}
+
+model Attributes {
+  id                    String             @id() @default(uuid())
+  name                  String             @unique
+  description           String?
+  type                  AttributesType
+  refAttributeClass     RefAttributeClass? @relation(fields: [refAttributeClassName], references: [name], onDelete: SetNull)
+  refAttributeClassName String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  AttributeValues   AttributeValues[]
+  CategoryAttribute CategoryAttribute[]
+}
+
+model RefAttributeClass {
+  name      String   @id() @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Attributes Attributes[]
+}
+
+enum AttributesType {
+  selectable
+  writable
+  both
+}
+
+model AttributeValues {
+  id           String     @id() @default(uuid())
+  name         String
+  attribute    Attributes @relation(fields: [attributesId], references: [id], onDelete: Cascade)
+  attributesId String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  ItemAttributeValues ItemAttributeValues[]
+}
+
+model CategoryAttribute {
+  id           String     @id() @default(uuid())
+  category     Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId   String
+  attribute    Attributes @relation(fields: [attributesId], references: [id], onDelete: Cascade)
+  attributesId String
+  required     Boolean    @default(false)
+  order        Int        @default(1)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model ItemAttributeValues {
+  id                String           @id() @default(uuid())
+  attributeValue    AttributeValues? @relation(fields: [attributeValuesId], references: [id], onDelete: SetNull)
+  attributeValuesId String?
+  item              Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId            String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }

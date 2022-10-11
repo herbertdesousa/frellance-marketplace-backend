@@ -32,7 +32,7 @@ export class DecodeFirebaseTokenMiddleware implements NestMiddleware {
       throw new UnauthorizedException({ message: 'Un Authorizated' });
     } catch (err) {
       console.log(err);
-      throw new BadRequestException({ message: 'Something is bad' });
+      throw new BadRequestException(err);
     }
   }
 }

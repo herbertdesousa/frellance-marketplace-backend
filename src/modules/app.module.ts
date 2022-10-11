@@ -7,14 +7,16 @@ import { DecodeFirebaseTokenMiddleware } from 'src/common/middlewares/decodeFire
 import { ExistsOnTableRule } from 'src/common/validations/ExistsOnTable';
 
 import { UserModule } from './user/user.module';
+import { ItemModule } from './items/item.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PrismaModule, UserModule],
+  imports: [ConfigModule.forRoot(), PrismaModule, UserModule, ItemModule],
   controllers: [],
   providers: [ExistsOnTableRule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes('users');
+    consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes('users', 'items');
   }
 }

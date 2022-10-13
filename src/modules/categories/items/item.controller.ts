@@ -15,7 +15,7 @@ import { SaveItemDto } from './dto/save-item';
 
 import { ItemService } from './item.service';
 
-@Controller('items')
+@Controller('categories/items')
 export class ItemController {
   constructor(private itemService: ItemService) {}
 
@@ -84,11 +84,6 @@ export class ItemController {
           });
         }
         itemAttributesValuesId.push(findedAttrValue.id);
-
-        // if (currAttrId.attribute.type === 'writable') {
-        //   this.itemService.createAttributeValue(attr.attributesId, )
-        //   return;
-        // }
       }),
     );
 
@@ -97,31 +92,5 @@ export class ItemController {
       data,
       itemAttributesValuesId,
     );
-  }
-
-  @Get('category/attributes')
-  async listCategoriesAttributes(@Query('id', ParseUUIDPipe) id: string) {
-    if (!(await this.itemService.findCategoryById(id)))
-      throw new NotFoundException({ message: 'categoria não encontrada' });
-
-    const result = await this.itemService.findAttributesByCategoryId(id);
-
-    return await Promise.all(
-      result.map(async (item) => ({
-        attributes_id: item.attribute.id,
-        required: item.required,
-        order: item.order,
-        name: item.attribute.name,
-        description: item.attribute.description || '',
-        type: item.attribute.type,
-        class: item.attribute.refAttributeClassName,
-        values: item.attribute.AttributeValues,
-      })),
-    );
-  }
-
-  @Get('category')
-  async listAllCategories(): Promise<Categories[]> {
-    return await this.itemService.findAllCategories();
   }
 }

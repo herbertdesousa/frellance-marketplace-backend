@@ -40,10 +40,11 @@ async function main() {
       });
     }
 
+    const { attributes: _, ...rest } = categories[i];
+
     await prisma.categories.create({
       data: {
-        name: categories[i].name,
-        img_url: categories[i].img,
+        ...rest,
         CategoryAttribute: {
           createMany: {
             data: attributes.map((i) => ({

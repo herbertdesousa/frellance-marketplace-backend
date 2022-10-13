@@ -1,3 +1,5 @@
+import { Categories } from '@prisma/client';
+
 export type AttributesPaths =
   // general
   | 'general/price_type'
@@ -21,12 +23,12 @@ export type AttributesPaths =
   | 'cars/end_of_license_plate'
   | 'cars/fuel_tankage_capacity'
   // real states
-  | 'real-states/beds_qty'
-  | 'real-states/baths_qty'
-  | 'real-states/sqm'
-  | 'real-states/sqm_built'
-  | 'real-states/year_built'
-  | 'real-states/property_type'
+  | 'real-estates/beds_qty'
+  | 'real-estates/baths_qty'
+  | 'real-estates/sqm'
+  | 'real-estates/sqm_built'
+  | 'real-estates/year_built'
+  | 'real-estates/property_type'
   // watches
   | 'watches/gender'
   | 'watches/case_material'
@@ -73,9 +75,10 @@ export type AttributesData = (
 ) &
   AttributesDataBase;
 
-export type CategoriesData = {
-  name: string;
-  img: string;
+export type CategoriesData = Omit<
+  Categories,
+  'createdAt' | 'updatedAt' | 'id'
+> & {
   attributes: {
     path: AttributesPaths;
     required: boolean;

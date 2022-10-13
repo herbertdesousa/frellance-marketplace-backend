@@ -1,12 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  Attributes,
-  AttributeValues,
-  Categories,
-  CategoryAttribute,
-  Items,
-} from '@prisma/client';
+import { AttributeValues, Items } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma/prisma.service';
 
 import { SaveItemDto } from './dto/save-item';
@@ -49,18 +43,10 @@ export class ItemService {
     });
   }
 
-  async findCategoryById(id: string): Promise<Categories> {
-    return await this.prisma.categories.findFirst({ where: { id } });
-  }
-
   async findAttributesByCategoryId(categoryId: string) {
     return await this.prisma.categoryAttribute.findMany({
       where: { categoryId },
       include: { attribute: { include: { AttributeValues: true } } },
     });
-  }
-
-  async findAllCategories(): Promise<Categories[]> {
-    return await this.prisma.categories.findMany();
   }
 }

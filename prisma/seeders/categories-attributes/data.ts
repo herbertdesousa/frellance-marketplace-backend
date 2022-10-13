@@ -154,38 +154,38 @@ export const attributes: AttributesData[] = [
   //#endregion
   //#region real states
   {
-    path: 'real-states/beds_qty',
+    path: 'real-estates/beds_qty',
     name: 'Quantidade de Quartos',
     type: 'writable',
     class: 'Imóveis',
   },
   {
-    path: 'real-states/baths_qty',
+    path: 'real-estates/baths_qty',
     name: 'Quantidade de Banheiros',
     type: 'writable',
     class: 'Imóveis',
   },
   {
-    path: 'real-states/sqm',
+    path: 'real-estates/sqm',
     name: 'Km Quadrados Total',
     type: 'writable',
     class: 'Imóveis',
   },
   {
-    path: 'real-states/sqm_built',
+    path: 'real-estates/sqm_built',
     name: 'Km Quadrados Construido',
     description: 'Total de KM Quadrados de área construida',
     type: 'writable',
     class: 'Imóveis',
   },
   {
-    path: 'real-states/year_built',
+    path: 'real-estates/year_built',
     name: 'Ano Contruido',
     type: 'writable',
     class: 'Imóveis',
   },
   {
-    path: 'real-states/property_type',
+    path: 'real-estates/property_type',
     name: 'Tipo de Residência',
     type: 'selectable',
     class: 'Imóveis',
@@ -358,7 +358,10 @@ export const attributes: AttributesData[] = [
 export const categories: CategoriesData[] = [
   {
     name: 'Carros',
-    img: '/',
+    img_url:
+      'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Fcars.webp?alt=media',
+    slug: 'carros',
+    iconName: 'FiCreditCard',
     attributes: [
       // general
       { path: 'general/price_type', required: true, order: 3 },
@@ -385,7 +388,10 @@ export const categories: CategoriesData[] = [
   },
   {
     name: 'Imóveis',
-    img: '/',
+    img_url:
+      'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Freal-estates.webp?alt=media',
+    slug: 'imoveis',
+    iconName: 'FiHome',
     attributes: [
       // general
       { path: 'general/price_type', required: true, order: 2 },
@@ -399,17 +405,20 @@ export const categories: CategoriesData[] = [
       { path: 'address/state', required: true, order: 2 },
       { path: 'address/city', required: true, order: 1 },
       // real states
-      { path: 'real-states/beds_qty', required: true, order: 4 },
-      { path: 'real-states/baths_qty', required: true, order: 3 },
-      { path: 'real-states/sqm', required: true, order: 2 },
-      { path: 'real-states/property_type', required: true, order: 1 },
-      { path: 'real-states/sqm_built', required: false, order: 0 },
-      { path: 'real-states/year_built', required: false, order: 0 },
+      { path: 'real-estates/beds_qty', required: true, order: 4 },
+      { path: 'real-estates/baths_qty', required: true, order: 3 },
+      { path: 'real-estates/sqm', required: true, order: 2 },
+      { path: 'real-estates/property_type', required: true, order: 1 },
+      { path: 'real-estates/sqm_built', required: false, order: 0 },
+      { path: 'real-estates/year_built', required: false, order: 0 },
     ],
   },
   {
     name: 'Relógios',
-    img: '/',
+    img_url:
+      'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Fwatches.webp?alt=media',
+    slug: 'relogios',
+    iconName: 'FiClock',
     attributes: [
       // general
       { path: 'general/price_type', required: true, order: 3 },
@@ -438,7 +447,10 @@ export const categories: CategoriesData[] = [
   },
   {
     name: 'Náuticos',
-    img: '/',
+    img_url:
+      'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Fnautical.webp?alt=media',
+    slug: 'nauticos',
+    iconName: 'FiAnchor',
     attributes: [
       // general
       { path: 'general/price_type', required: true, order: 3 },
@@ -471,7 +483,10 @@ export const categories: CategoriesData[] = [
   },
   {
     name: 'Aeronaves',
-    img: '/',
+    img_url:
+      'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Faircrafts.webp?alt=media',
+    slug: 'aeronaves',
+    iconName: 'FiSend',
     attributes: [
       // general
       { path: 'general/price_type', required: true, order: 3 },

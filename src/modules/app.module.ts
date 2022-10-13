@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
 
@@ -7,16 +12,18 @@ import { DecodeFirebaseTokenMiddleware } from 'src/common/middlewares/decodeFire
 import { ExistsOnTableRule } from 'src/common/validations/ExistsOnTable';
 
 import { UserModule } from './user/user.module';
-import { ItemModule } from './items/item.module';
-import { MulterModule } from '@nestjs/platform-express';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PrismaModule, UserModule, ItemModule],
+  imports: [ConfigModule.forRoot(), PrismaModule, UserModule, CategoriesModule],
   controllers: [],
   providers: [ExistsOnTableRule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes('users', 'items');
+    consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes('users', {
+      path: '/categories/items',
+      method: RequestMethod.POST,
+    });
   }
 }

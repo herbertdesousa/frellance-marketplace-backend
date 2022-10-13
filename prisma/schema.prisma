@@ -75,6 +75,8 @@ model ItemPicture {
 model Categories {
   id        String   @id() @default(uuid())
   name      String   @unique
+  slug      String   @unique
+  iconName  String
   img_url   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

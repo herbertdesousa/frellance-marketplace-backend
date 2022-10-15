@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { attributes, categories } from './data';
 
-import { AttributesPaths } from './types';
+import { AttributesDataSectableOrBoth, AttributesPaths } from './types';
 
 const prisma = new PrismaClient();
 
@@ -10,10 +10,23 @@ type AttributesIds = { [key in AttributesPaths]: string };
 async function main() {
   const attributesId: AttributesIds = {} as AttributesIds;
   for (let i = 0; i < attributes.length; i++) {
+    const uptAttributes: { val: AttributesDataSectableOrBoth['values'] } = {
+      val: [],
+    };
+
+    if (attributes[i].type === 'writable') {
+      uptAttributes.val = [];
+    } else {
+      uptAttributes.val = (
+        attributes[i] as AttributesDataSectableOrBoth
+      ).values.map((item) => ({ ...item, default: true }));
+    }
+
     const attribute = await prisma.attributes.create({
       data: {
         name: attributes[i].name,
         type: attributes[i].type,
+        path: attributes[i].path,
         refAttributeClass: {
           connectOrCreate: {
             create: { name: attributes[i].class },
@@ -22,7 +35,7 @@ async function main() {
         },
         AttributeValues: {
           createMany: {
-            data: (attributes[i] as any)?.values || [],
+            data: uptAttributes.val,
           },
         },
       },

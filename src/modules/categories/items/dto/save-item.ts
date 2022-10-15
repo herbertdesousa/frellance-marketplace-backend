@@ -1,11 +1,14 @@
 import { Type } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsString,
-  MinLength,
-  ValidateNested,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, MinLength, ValidateNested } from 'class-validator';
 import { ExistsOnTable } from 'src/common/validations/ExistsOnTable';
+
+class SaveItemImg {
+  @IsNotEmpty({ message: 'obrigatório' })
+  name: string;
+
+  @IsNotEmpty({ message: 'obrigatório' })
+  url: string;
+}
 
 class SaveItemAttributes {
   @IsNotEmpty({ message: 'obrigatório' })
@@ -16,27 +19,39 @@ class SaveItemAttributes {
   value: string;
 }
 
+class SaveItemPrice {
+  @IsNotEmpty({ message: 'obrigatório' })
+  @IsEnum(['alugar', 'vender'], { message: 'inválido' })
+  type: 'alugar' | 'vender';
+
+  @IsNotEmpty({ message: 'obrigatório' })
+  value: string;
+}
+
 export class SaveItemDto {
   @IsNotEmpty({ message: 'obrigatório' })
   name: string;
 
   @IsNotEmpty({ message: 'obrigatório' })
-  @MinLength(50, { message: 'mínimo de 50 caracters' })
+  @MinLength(15, { message: 'mínimo de 15 caracters' })
   description: string;
 
   @IsNotEmpty({ message: 'obrigatório' })
   @ExistsOnTable({ table: 'categories' })
   category_id: string;
 
-  @IsString({ message: 'inválido', each: true })
-  imgs: string[];
+  @IsNotEmpty({ message: 'obrigatório' })
+  @ValidateNested({ each: true })
+  @Type(() => SaveItemPrice)
+  price: SaveItemPrice;
+
+  @IsNotEmpty({ message: 'obrigatório' })
+  @ValidateNested({ each: true })
+  @Type(() => SaveItemImg)
+  imgs: SaveItemImg[];
 
   @IsNotEmpty({ message: 'obrigatório' })
   @ValidateNested({ each: true })
   @Type(() => SaveItemAttributes)
   attributes: SaveItemAttributes[];
-
-  // @ValidateNested()
-  // @Type(() => SaveItemAddressDto)
-  // address: SaveItemAddressDto;
 }

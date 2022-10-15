@@ -54,6 +54,7 @@ model Items {
   description String
   user        User       @relation(fields: [userId], references: [uid], onDelete: Cascade)
   userId      String
+  itemPrice   ItemPrice?
   category    Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  String
   createdAt   DateTime   @default(now())
@@ -61,11 +62,29 @@ model Items {
 
   ItemPicture         ItemPicture[]
   ItemAttributeValues ItemAttributeValues[]
+  itemPriceId         String?
+}
+
+model ItemPrice {
+  id     String        @id() @default(uuid())
+  type   ItemPriceType @default(vender)
+  value  String        @default("a combinar")
+  item   Items         @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId String        @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ItemPriceType {
+  alugar
+  vender
 }
 
 model ItemPicture {
   id        String   @id() @default(uuid())
   url       String
+  name      String
   item      Items    @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    String
   createdAt DateTime @default(now())
@@ -89,6 +108,7 @@ model Attributes {
   id                    String             @id() @default(uuid())
   name                  String
   description           String?
+  path                  String?
   type                  AttributesType
   refAttributeClass     RefAttributeClass? @relation(fields: [refAttributeClassName], references: [name], onDelete: SetNull)
   refAttributeClassName String?
@@ -118,6 +138,7 @@ model AttributeValues {
   name         String
   attribute    Attributes @relation(fields: [attributesId], references: [id], onDelete: Cascade)
   attributesId String
+  default      Boolean    @default(false)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
@@ -137,11 +158,11 @@ model CategoryAttribute {
 }
 
 model ItemAttributeValues {
-  id                String           @id() @default(uuid())
-  attributeValue    AttributeValues? @relation(fields: [attributeValuesId], references: [id], onDelete: SetNull)
-  attributeValuesId String?
-  item              Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id                String          @id() @default(uuid())
+  attributeValue    AttributeValues @relation(fields: [attributeValuesId], references: [id], onDelete: Cascade)
+  attributeValuesId String
+  item              Items           @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId            String
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }

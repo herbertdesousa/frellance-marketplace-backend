@@ -1,7 +1,5 @@
 import admin from 'firebase-admin';
 
-// import serviceAccount from './firebase-service-account.json';
-
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -11,12 +9,17 @@ const serviceAccount = JSON.parse(
   }),
 );
 
-admin.initializeApp({
+const app = admin.initializeApp({
   credential: admin.credential.cert({
     clientEmail: serviceAccount.client_email,
     privateKey: serviceAccount.private_key,
     projectId: serviceAccount.project_id,
   }),
+  projectId: 'frellance-marketplace',
+  storageBucket: 'frellance-marketplace.appspot.com',
 });
 
-export default admin;
+const auth = admin.auth(app);
+const storage = admin.storage(app).bucket();
+
+export default { auth, storage };

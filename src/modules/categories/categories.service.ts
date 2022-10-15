@@ -14,7 +14,11 @@ export class CategoriesService {
   async findAttributes(categoryId: string) {
     return await this.prisma.categoryAttribute.findMany({
       where: { categoryId },
-      include: { attribute: { include: { AttributeValues: true } } },
+      include: {
+        attribute: {
+          include: { AttributeValues: { where: { default: true } } },
+        },
+      },
     });
   }
 

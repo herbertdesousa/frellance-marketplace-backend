@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
-import admin from 'src/config/firebase-config';
+import firebaseConfig from 'src/config/firebase-config';
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class DecodeFirebaseTokenMiddleware implements NestMiddleware {
     const token = req.headers.authorization?.split(' ')[1] || '';
 
     try {
-      const decodeValue = await admin.auth().verifyIdToken(token);
+      const decodeValue = await firebaseConfig.auth.verifyIdToken(token);
 
       const user: FirebaseUserDto = {
         email: decodeValue.email,

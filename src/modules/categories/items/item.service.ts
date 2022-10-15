@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AttributeValues, Items } from '@prisma/client';
+import { AttributeValues, Items, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma/prisma.service';
 
 import { SaveItemDto } from './dto/save-item';
@@ -21,7 +21,12 @@ export class ItemService {
         description: payload.description,
         categoryId: payload.category_id,
         ItemPicture: {
-          createMany: { data: payload.imgs.map((item) => ({ url: item })) },
+          createMany: {
+            data: payload.imgs.map((item) => ({
+              url: item.url,
+              name: item.name,
+            })),
+          },
         },
         ItemAttributeValues: {
           createMany: {
@@ -29,6 +34,9 @@ export class ItemService {
               attributeValuesId: id,
             })),
           },
+        },
+        itemPrice: {
+          create: payload.price,
         },
       },
     });
@@ -46,7 +54,35 @@ export class ItemService {
   async findAttributesByCategoryId(categoryId: string) {
     return await this.prisma.categoryAttribute.findMany({
       where: { categoryId },
-      include: { attribute: { include: { AttributeValues: true } } },
+      include: {
+        attribute: {
+          include: { AttributeValues: true },
+        },
+      },
     });
+  }
+
+  async delete(id: string) {
+    return await this.prisma.items.delete({ where: { id } });
+  }
+
+  async findAllByUserId<T>(
+    userId: string,
+    include?: Prisma.ItemsInclude,
+  ): Promise<(Items & T)[]> {
+    return (await this.prisma.items.findMany({
+      where: { userId },
+      include,
+    })) as any;
+  }
+
+  async findById<T>(
+    id: string,
+    include?: Prisma.ItemsInclude,
+  ): Promise<Items & T> {
+    return (await this.prisma.items.findFirst({
+      where: { id },
+      include,
+    })) as any;
   }
 }

@@ -3,20 +3,6 @@ import { AttributesData, CategoriesData } from './types';
 export const attributes: AttributesData[] = [
   //#region  general
   {
-    path: 'general/price_type',
-    name: 'Tipo de Preço',
-    class: 'Geral',
-    type: 'selectable',
-    values: [{ name: 'Alugar' }, { name: 'Vender' }],
-  },
-  {
-    path: 'general/price',
-    name: 'Preço',
-    class: 'Geral',
-    type: 'both',
-    values: [{ name: 'A Combinar' }],
-  },
-  {
     path: 'general/condition',
     name: 'Condição',
     class: 'Geral',
@@ -364,8 +350,6 @@ export const categories: CategoriesData[] = [
     iconName: 'FiCreditCard',
     attributes: [
       // general
-      { path: 'general/price_type', required: true, order: 3 },
-      { path: 'general/price', required: true, order: 2 },
       { path: 'general/condition', required: true, order: 1 },
       { path: 'general/year', required: true, order: 0 },
       // address
@@ -393,9 +377,6 @@ export const categories: CategoriesData[] = [
     slug: 'imoveis',
     iconName: 'FiHome',
     attributes: [
-      // general
-      { path: 'general/price_type', required: true, order: 2 },
-      { path: 'general/price', required: true, order: 1 },
       // address
       { path: 'address/postal_code', required: true, order: 7 },
       { path: 'address/number', required: true, order: 6 },
@@ -420,9 +401,6 @@ export const categories: CategoriesData[] = [
     slug: 'relogios',
     iconName: 'FiClock',
     attributes: [
-      // general
-      { path: 'general/price_type', required: true, order: 3 },
-      { path: 'general/price', required: true, order: 2 },
       { path: 'general/condition', required: true, order: 1 },
       { path: 'general/year', required: true, order: 0 },
       // address
@@ -452,9 +430,6 @@ export const categories: CategoriesData[] = [
     slug: 'nauticos',
     iconName: 'FiAnchor',
     attributes: [
-      // general
-      { path: 'general/price_type', required: true, order: 3 },
-      { path: 'general/price', required: true, order: 2 },
       { path: 'general/condition', required: true, order: 1 },
       { path: 'general/year', required: true, order: 0 },
       // address
@@ -488,9 +463,6 @@ export const categories: CategoriesData[] = [
     slug: 'aeronaves',
     iconName: 'FiSend',
     attributes: [
-      // general
-      { path: 'general/price_type', required: true, order: 3 },
-      { path: 'general/price', required: true, order: 2 },
       { path: 'general/condition', required: true, order: 1 },
       { path: 'general/year', required: true, order: 0 },
       // address

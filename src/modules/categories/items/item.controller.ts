@@ -1,17 +1,27 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
-  ParseUUIDPipe,
   Post,
   Query,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { Categories, Items } from '@prisma/client';
+import {
+  Categories,
+  ItemAttributeValues,
+  AttributeValues,
+  Attributes,
+  ItemPicture,
+  Items,
+  ItemPrice,
+} from '@prisma/client';
 
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 import { SaveItemDto } from './dto/save-item';
+
+import firebaseAdmin from 'src/config/firebase-config';
 
 import { ItemService } from './item.service';
 
@@ -92,5 +102,87 @@ export class ItemController {
       data,
       itemAttributesValuesId,
     );
+  }
+
+  @Delete()
+  async delete(@Query('id') id: string): Promise<void> {
+    if (!id) throw new UnprocessableEntityException({ id: 'obrigatório' });
+
+    try {
+      const findedItem = await this.itemService.findById<{
+        ItemPicture: ItemPicture[];
+      }>(id, { ItemPicture: true });
+
+      await Promise.all(
+        findedItem.ItemPicture.map(async (item) => {
+          await firebaseAdmin.storage.file('items/' + item.name).delete();
+        }),
+      );
+
+      await this.itemService.delete(findedItem.id);
+    } catch (err) {
+      console.log(err);
+      throw new NotFoundException({ error: 'não encontrado' });
+    }
+  }
+
+  @Get()
+  async findAll(@Body('user') user: FirebaseUserDto) {
+    const finded = await this.itemService.findAllByUserId<{
+      ItemPicture: ItemPicture;
+      category: Categories;
+    }>(user.uid, {
+      ItemPicture: true,
+      category: true,
+    });
+
+    return finded.map((i) => ({
+      id: i.id,
+      name: i.name,
+      pictures: i.ItemPicture,
+      description: i.description,
+      category: i.category,
+    }));
+  }
+
+  @Get('/details')
+  async findDetails(@Query('id') id: string) {
+    if (!id) throw new UnprocessableEntityException({ id: 'obrigatório' });
+
+    try {
+      const finded = await this.itemService.findById<{
+        ItemPicture: ItemPicture;
+        category: Categories;
+        itemPrice: ItemPrice;
+        ItemAttributeValues: ItemAttributeValues &
+          { attributeValue: AttributeValues & { attribute: Attributes } }[];
+      }>(id, {
+        ItemPicture: true,
+        category: true,
+        itemPrice: true,
+        ItemAttributeValues: {
+          include: { attributeValue: { include: { attribute: true } } },
+        },
+      });
+
+      return {
+        id: finded.id,
+        name: finded.name,
+        price: { value: finded.itemPrice.value, type: finded.itemPrice.type },
+        category: finded.category,
+        pictures: finded.ItemPicture,
+        attributes: finded.ItemAttributeValues.map((item) => ({
+          id: item.attributeValue.attribute.id,
+          name: item.attributeValue.attribute.name,
+          path: item.attributeValue.attribute.path,
+          description: item.attributeValue.attribute.description || '',
+          class: item.attributeValue.attribute.refAttributeClassName,
+          value: item.attributeValue.name,
+        })),
+        description: finded.description,
+      };
+    } catch (err) {
+      throw new NotFoundException({ error: 'item não encontrado' });
+    }
   }
 }

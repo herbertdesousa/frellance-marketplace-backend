@@ -2,8 +2,6 @@ import { Categories } from '@prisma/client';
 
 export type AttributesPaths =
   // general
-  | 'general/price_type'
-  | 'general/price'
   | 'general/condition'
   | 'general/year'
   // address
@@ -64,16 +62,16 @@ type AttributesDataBase = {
   class: string;
   description?: string;
 };
-export type AttributesData = (
-  | {
-      type: 'writable';
-    }
-  | {
-      type: 'selectable' | 'both';
-      values: { name: string }[];
-    }
-) &
-  AttributesDataBase;
+export type AttributesDataWritable = AttributesDataBase & {
+  type: 'writable';
+};
+export type AttributesDataSectableOrBoth = AttributesDataBase & {
+  type: 'selectable' | 'both';
+  values: { name: string; default?: boolean }[];
+};
+export type AttributesData =
+  | AttributesDataWritable
+  | AttributesDataSectableOrBoth;
 
 export type CategoriesData = Omit<
   Categories,

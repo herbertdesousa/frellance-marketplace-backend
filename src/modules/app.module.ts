@@ -23,7 +23,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes('users', {
       path: '/categories/items',
-      method: RequestMethod.POST,
+      method: RequestMethod.ALL,
     });
   }
 }

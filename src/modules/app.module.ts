@@ -13,17 +13,28 @@ import { ExistsOnTableRule } from 'src/common/validations/ExistsOnTable';
 
 import { UserModule } from './user/user.module';
 import { CategoriesModule } from './categories/categories.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PrismaModule, UserModule, CategoriesModule],
+  imports: [
+    ConfigModule.forRoot(),
+    PrismaModule,
+    UserModule,
+    CategoriesModule,
+    AnalyticsModule,
+  ],
   controllers: [],
   providers: [ExistsOnTableRule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes('users', {
-      path: '/categories/items',
-      method: RequestMethod.ALL,
-    });
+    consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes(
+      'users',
+      {
+        path: '/categories/items',
+        method: RequestMethod.ALL,
+      },
+      'analytics',
+    );
   }
 }

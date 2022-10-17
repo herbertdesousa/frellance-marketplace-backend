@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  AnalyticsRequestContact,
-  Items,
-} from '@prisma/client';
+import { AnalyticsRequestContact, Items } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma/prisma.service';
 
 @Injectable()

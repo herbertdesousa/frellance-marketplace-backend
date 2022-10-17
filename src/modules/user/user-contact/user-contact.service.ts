@@ -20,7 +20,7 @@ export class UserContactService {
     });
   }
 
-  async findAll(uid: string): Promise<UserContacts[]> {
+  async findAllByUserId(uid: string): Promise<UserContacts[]> {
     return await this.prisma.userContacts.findMany({
       where: { userId: uid },
     });

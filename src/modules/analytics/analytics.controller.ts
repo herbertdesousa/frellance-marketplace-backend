@@ -16,34 +16,33 @@ import { AnalyticsService } from './analytics.service';
 export class AnalyticsController {
   constructor(private analyticsService: AnalyticsService) {}
 
-  @Post()
-  async create(
-    @Body('user') user: FirebaseUserDto,
-    @Query('type') type: string,
-    @Query('itemId') itemId: string,
-  ): Promise<AnalyticsRequestContact> {
-    if (!type)
-      throw new UnprocessableEntityException({
-        type: 'obrigatório',
-      });
-    if (!itemId)
-      throw new UnprocessableEntityException({
-        itemId: 'obrigatório',
-      });
+  // async create(
+  //   @Body('user') user: FirebaseUserDto,
+  //   @Query('type') type: string,
+  //   @Query('itemId') itemId: string,
+  // ): Promise<AnalyticsRequestContact> {
+  //   if (!type)
+  //     throw new UnprocessableEntityException({
+  //       type: 'obrigatório',
+  //     });
+  //   if (!itemId)
+  //     throw new UnprocessableEntityException({
+  //       itemId: 'obrigatório',
+  //     });
 
-    if (!(await this.analyticsService.findItemById(itemId))) {
-      throw new NotFoundException({ error: 'item não encontrado' });
-    }
+  //   if (!(await this.analyticsService.findItemById(itemId))) {
+  //     throw new NotFoundException({ error: 'item não encontrado' });
+  //   }
 
-    // if (type === 'item-view') {
-    //   return await this.analyticsService.createItemView(user.uid, itemId);
-    // }
-    if (type === 'request-contact') {
-      return await this.analyticsService.createRequestContact(user.uid, itemId);
-    }
+  //   // if (type === 'item-view') {
+  //   //   return await this.analyticsService.createItemView(user.uid, itemId);
+  //   // }
+  //   if (type === 'request-contact') {
+  //     return await this.analyticsService.createRequestContact(user.uid, itemId);
+  //   }
 
-    throw new UnprocessableEntityException({ type: 'inválido' });
-  }
+  //   throw new UnprocessableEntityException({ type: 'inválido' });
+  // }
 
   @Get()
   async listAll(
@@ -54,7 +53,6 @@ export class AnalyticsController {
       throw new UnprocessableEntityException({
         type: 'obrigatório',
       });
-
     // if (type === 'item-view') {
     //   return await this.analyticsService.findAllItemViewFromUserId(user.uid);
     // }

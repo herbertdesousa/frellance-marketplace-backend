@@ -19,9 +19,9 @@ import { AnalyticsModule } from './analytics/analytics.module';
   imports: [
     ConfigModule.forRoot(),
     PrismaModule,
+    AnalyticsModule,
     UserModule,
     CategoriesModule,
-    AnalyticsModule,
   ],
   controllers: [],
   providers: [ExistsOnTableRule],
@@ -33,6 +33,10 @@ export class AppModule implements NestModule {
       {
         path: '/categories/items',
         method: RequestMethod.ALL,
+      },
+      {
+        path: 'categories/items/details/analytics',
+        method: RequestMethod.GET,
       },
       'analytics',
     );

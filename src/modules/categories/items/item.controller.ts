@@ -16,6 +16,8 @@ import {
   ItemPicture,
   Items,
   ItemPrice,
+  AnalyticsRequestContact,
+  UserRecentsView,
 } from '@prisma/client';
 
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
@@ -24,6 +26,7 @@ import { SaveItemDto } from './dto/save-item';
 import firebaseAdmin from 'src/config/firebase-config';
 
 import { ItemService } from './item.service';
+import { DecodeFirebaseTokenMiddleware } from 'src/common/middlewares/decodeFirebaseToken';
 
 @Controller('categories/items')
 export class ItemController {
@@ -131,9 +134,13 @@ export class ItemController {
     const finded = await this.itemService.findAllByUserId<{
       ItemPicture: ItemPicture;
       category: Categories;
+      AnalyticsRequestContact: AnalyticsRequestContact[];
+      UserRecentsView: UserRecentsView[];
     }>(user.uid, {
       ItemPicture: true,
       category: true,
+      AnalyticsRequestContact: { where: { userUid: user.uid } },
+      UserRecentsView: { where: { userUid: user.uid } },
     });
 
     return finded.map((i) => ({
@@ -142,6 +149,10 @@ export class ItemController {
       pictures: i.ItemPicture,
       description: i.description,
       category: i.category,
+      anayltics: {
+        requestContacts: i.AnalyticsRequestContact.length,
+        views: i.UserRecentsView.length,
+      },
     }));
   }
 
@@ -168,6 +179,7 @@ export class ItemController {
       return {
         id: finded.id,
         name: finded.name,
+        userId: finded.userId,
         price: { value: finded.itemPrice.value, type: finded.itemPrice.type },
         category: finded.category,
         pictures: finded.ItemPicture,
@@ -184,5 +196,26 @@ export class ItemController {
     } catch (err) {
       throw new NotFoundException({ error: 'item não encontrado' });
     }
+  }
+
+  @Get('/details/analytics')
+  async findDetailsAnalytics(
+    @Body('user') user: FirebaseUserDto,
+    @Query('id') id: string,
+  ) {
+    const finded = await this.itemService.findById<{
+      AnalyticsRequestContact: AnalyticsRequestContact[];
+      UserRecentsView: UserRecentsView[];
+    }>(id, {
+      AnalyticsRequestContact: { where: { userUid: user.uid } },
+      UserRecentsView: { where: { userUid: user.uid } },
+    });
+
+    if (finded.userId !== user.uid) return;
+
+    return {
+      requestContacts: finded.AnalyticsRequestContact.length,
+      views: finded.UserRecentsView.length,
+    };
   }
 }

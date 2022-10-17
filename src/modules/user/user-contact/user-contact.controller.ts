@@ -7,17 +7,22 @@ import {
   Delete,
   Query,
   UnprocessableEntityException,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserContacts } from '@prisma/client';
-import { ExistsOnTable } from 'src/common/validations/ExistsOnTable';
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 
+import { AnalyticsService } from 'src/modules/analytics/analytics.service';
 import { SaveUserContactDto } from './dto/save-user-contact';
 import { UserContactService } from './user-contact.service';
 
 @Controller('users/contacts')
 export class UserContactController {
-  constructor(private userContactService: UserContactService) {}
+  constructor(
+    private userContactService: UserContactService,
+    private analyticsService: AnalyticsService,
+  ) {}
 
   @Post()
   async create(
@@ -28,8 +33,21 @@ export class UserContactController {
   }
 
   @Get()
-  async listAll(@Body('user') user: FirebaseUserDto): Promise<UserContacts[]> {
-    return await this.userContactService.findAll(user.uid);
+  async listAll(
+    @Body('user') user: FirebaseUserDto,
+    @Query('itemId') itemId?: string,
+    @Query('ownerItemUserId') ownerItemUserId?: string,
+  ): Promise<UserContacts[]> {
+    const finded = await this.userContactService.findAllByUserId(
+      ownerItemUserId,
+    );
+
+    if (!finded) throw new NotFoundException({ error: 'não encontrado' });
+
+    if (itemId && ownerItemUserId)
+      await this.analyticsService.createRequestContact(user.uid, itemId);
+
+    return finded;
   }
 
   @Put()
@@ -50,7 +68,7 @@ export class UserContactController {
     @Body('user') user: FirebaseUserDto,
     @Query('id') id: string,
   ): Promise<UserContacts> {
-    const all = await this.userContactService.findAll(user.uid);
+    const all = await this.userContactService.findAllByUserId(user.uid);
 
     if (all.length <= 1)
       throw new UnprocessableEntityException({

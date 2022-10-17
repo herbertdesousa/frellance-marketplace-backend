@@ -44,7 +44,6 @@ export class UserPreferencesController {
         user.uid,
         itemId,
       );
-
       if (!finded) {
         return await this.userPreferencesService.createRecentView(
           user.uid,

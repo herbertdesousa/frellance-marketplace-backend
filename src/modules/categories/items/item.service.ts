@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { AttributeValues, Items, Prisma } from '@prisma/client';
+import { AttributeValues, Items, Prisma, UserFavorites } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma/prisma.service';
 
 import { SaveItemDto } from './dto/save-item';
+
+import { FindAllPayload } from './item.controller';
 
 @Injectable()
 export class ItemService {
@@ -84,5 +86,53 @@ export class ItemService {
       where: { id },
       include,
     })) as any;
+  }
+
+  // : Promise<(Items & { itemPrice: ItemPrice })[]>
+  async findAll(payload: FindAllPayload) {
+    return await this.prisma.items.findMany({
+      ...(payload.limit ? { take: Number(payload.limit) } : {}),
+      where: {
+        ...(payload.byCategoryId ? { categoryId: payload.byCategoryId } : {}),
+      },
+      include: {
+        itemPrice: true,
+        ItemPicture: true,
+        ItemAttributeValues: {
+          where: {
+            attributeValue: {
+              attribute: {
+                path: { in: ['address/state', 'address/city'] },
+              },
+            },
+          },
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        ...(payload.selectMostView
+          ? { UserRecentsView: { _count: 'desc' } }
+          : {}),
+        ...(payload.order ? { createdAt: payload.order } : {}),
+      },
+    });
+  }
+
+  async findIsFavorited(
+    userUid: string,
+    itemsId: string,
+  ): Promise<UserFavorites[]> {
+    return await this.prisma.userFavorites.findMany({
+      where: {
+        userUid,
+        itemsId,
+      },
+    });
   }
 }

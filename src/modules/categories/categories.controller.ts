@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   NotFoundException,
+  Param,
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
@@ -37,5 +38,14 @@ export class CategoriesController {
         values: item.attribute.AttributeValues,
       })),
     );
+  }
+
+  @Get('/slug/:slug')
+  async getBySlug(@Param('slug') slug: string): Promise<Categories> {
+    const finded = await this.categoriesService.findOneBySlug(slug);
+
+    if (!finded) throw new NotFoundException({ error: 'não encontrado' });
+
+    return finded;
   }
 }

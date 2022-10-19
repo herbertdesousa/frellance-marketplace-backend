@@ -26,9 +26,16 @@ import { SaveItemDto } from './dto/save-item';
 import firebaseAdmin from 'src/config/firebase-config';
 
 import { ItemService } from './item.service';
-import { DecodeFirebaseTokenMiddleware } from 'src/common/middlewares/decodeFirebaseToken';
 
-@Controller('categories/items')
+export interface FindAllPayload {
+  limit?: number;
+  order?: 'asc' | 'desc';
+  selectMostView?: boolean;
+  selectAddress?: boolean;
+  byCategoryId?: string;
+}
+
+@Controller('/categories/items')
 export class ItemController {
   constructor(private itemService: ItemService) {}
 
@@ -130,29 +137,19 @@ export class ItemController {
   }
 
   @Get()
-  async findAll(@Body('user') user: FirebaseUserDto) {
-    const finded = await this.itemService.findAllByUserId<{
-      ItemPicture: ItemPicture;
-      category: Categories;
-      AnalyticsRequestContact: AnalyticsRequestContact[];
-      UserRecentsView: UserRecentsView[];
-    }>(user.uid, {
-      ItemPicture: true,
-      category: true,
-      AnalyticsRequestContact: { where: { userUid: user.uid } },
-      UserRecentsView: { where: { userUid: user.uid } },
-    });
+  async findAll(@Query() payload: FindAllPayload) {
+    const finded = await this.itemService.findAll(payload);
 
-    return finded.map((i) => ({
-      id: i.id,
-      name: i.name,
-      pictures: i.ItemPicture,
-      description: i.description,
-      category: i.category,
-      anayltics: {
-        requestContacts: i.AnalyticsRequestContact.length,
-        views: i.UserRecentsView.length,
-      },
+    return finded.map((item) => ({
+      id: item.id,
+      name: item.name,
+      img: item.ItemPicture[0].url,
+      description: item.description,
+      price: item.itemPrice.value,
+      address: item.ItemAttributeValues.map((address) => ({
+        [address.attributeValue.attribute.path.replace('address/', '')]:
+          address.attributeValue.name,
+      })).reduce((preview, current) => ({ ...preview, ...current })),
     }));
   }
 
@@ -211,11 +208,50 @@ export class ItemController {
       UserRecentsView: { where: { userUid: user.uid } },
     });
 
+    if (!finded) throw new NotFoundException({ erro: 'não encontrado' });
+
     if (finded.userId !== user.uid) return;
 
     return {
       requestContacts: finded.AnalyticsRequestContact.length,
       views: finded.UserRecentsView.length,
+    };
+  }
+
+  @Get('user')
+  async findAllFromUser(@Body('user') user: FirebaseUserDto) {
+    const finded = await this.itemService.findAllByUserId<{
+      ItemPicture: ItemPicture;
+      category: Categories;
+      AnalyticsRequestContact: AnalyticsRequestContact[];
+      UserRecentsView: UserRecentsView[];
+    }>(user.uid, {
+      ItemPicture: true,
+      category: true,
+      AnalyticsRequestContact: { where: { userUid: user.uid } },
+      UserRecentsView: { where: { userUid: user.uid } },
+    });
+
+    return finded.map((i) => ({
+      id: i.id,
+      name: i.name,
+      pictures: i.ItemPicture,
+      description: i.description,
+      category: i.category,
+      anayltics: {
+        requestContacts: i.AnalyticsRequestContact.length,
+        views: i.UserRecentsView.length,
+      },
+    }));
+  }
+
+  @Get('favorited')
+  async findIsFavorited(
+    @Body('user') user: FirebaseUserDto,
+    @Query('id') id: string,
+  ): Promise<{ value: boolean }> {
+    return {
+      value: !!(await this.itemService.findIsFavorited(user.uid, id)).length,
     };
   }
 }

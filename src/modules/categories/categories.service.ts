@@ -25,4 +25,8 @@ export class CategoriesService {
   async findAll(): Promise<Categories[]> {
     return await this.prisma.categories.findMany();
   }
+
+  async findOneBySlug(slug: string): Promise<Categories> {
+    return await this.prisma.categories.findFirst({ where: { slug } });
+  }
 }

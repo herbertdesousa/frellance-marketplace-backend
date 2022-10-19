@@ -32,10 +32,18 @@ export class AppModule implements NestModule {
       'users',
       {
         path: '/categories/items',
-        method: RequestMethod.ALL,
+        method: RequestMethod.POST || RequestMethod.DELETE,
       },
       {
         path: 'categories/items/details/analytics',
+        method: RequestMethod.GET,
+      },
+      {
+        path: 'categories/items/user',
+        method: RequestMethod.GET,
+      },
+      {
+        path: 'categories/items/favorited',
         method: RequestMethod.GET,
       },
       'analytics',

@@ -1,22 +1,13 @@
 import admin from 'firebase-admin';
 
-import * as fs from 'fs';
-import * as path from 'path';
-
-const serviceAccount = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, './firebase-service-account.json'), {
-    encoding: 'utf8',
-  }),
-);
-
 const app = admin.initializeApp({
   credential: admin.credential.cert({
-    clientEmail: serviceAccount.client_email,
-    privateKey: serviceAccount.private_key,
-    projectId: serviceAccount.project_id,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY,
+    projectId: process.env.FIREBASE_PROJECT_ID,
   }),
-  projectId: 'frellance-marketplace',
-  storageBucket: 'frellance-marketplace.appspot.com',
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 });
 
 const auth = admin.auth(app);

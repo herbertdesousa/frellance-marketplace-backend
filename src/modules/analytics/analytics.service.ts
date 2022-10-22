@@ -16,8 +16,8 @@ export class AnalyticsService {
   }
 
   async createRequestContact(
-    userUid: string,
     itemsId: string,
+    userUid?: string,
   ): Promise<AnalyticsRequestContact> {
     return await this.prisma.analyticsRequestContact.create({
       data: { userUid, itemsId },

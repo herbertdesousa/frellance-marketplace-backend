@@ -14,6 +14,7 @@ import { ExistsOnTableRule } from 'src/common/validations/ExistsOnTable';
 import { UserModule } from './user/user.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDecodeFirebaseToken';
 
 @Module({
   imports: [
@@ -28,8 +29,33 @@ import { AnalyticsModule } from './analytics/analytics.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(DecodeFirebaseTokenMiddleware)
+      .exclude('users/contacts/item');
+    consumer
+      .apply(OptionalDecodeFirebaseToken)
+      .forRoutes('users/contacts/item');
     consumer.apply(DecodeFirebaseTokenMiddleware).forRoutes(
-      'users',
+      {
+        path: '/users',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: '/users/preferences',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: '/users/name',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: '/users/user_notification_on_chat_messages',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: '/users/contacts',
+        method: RequestMethod.ALL,
+      },
       {
         path: '/categories/items',
         method: RequestMethod.POST || RequestMethod.DELETE,

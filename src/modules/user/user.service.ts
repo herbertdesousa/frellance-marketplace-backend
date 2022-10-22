@@ -39,7 +39,14 @@ export class UserService {
   async findEntireUserByUid(uid: string): Promise<EntireUser | undefined> {
     const user = await this.prisma.user.findFirst({
       where: { uid },
-      include: { UserContacts: true, UserNotificationOnChatMessages: true },
+      include: {
+        UserContacts: {
+          where: { userId: uid },
+        },
+        UserNotificationOnChatMessages: {
+          where: { userId: uid },
+        },
+      },
     });
 
     if (!user) return;
@@ -66,7 +73,7 @@ export class UserService {
   ): Promise<UserNotificationOnChatMessages> {
     const user = await this.prisma.user.findFirst({
       where: { uid },
-      include: { UserNotificationOnChatMessages: true },
+      include: { UserNotificationOnChatMessages: { where: { userId: uid } } },
     });
 
     return await this.prisma.userNotificationOnChatMessages.update({

@@ -175,8 +175,8 @@ model ItemAttributeValues {
 
 model AnalyticsRequestContact {
   id            String   @id() @default(uuid())
-  userViewerUid User     @relation(fields: [userUid], references: [uid], onDelete: Cascade)
-  userUid       String
+  userViewerUid User?    @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  userUid       String?
   itemId        Items    @relation(fields: [itemsId], references: [id], onDelete: Cascade)
   itemsId       String
   createdAt     DateTime @default(now())

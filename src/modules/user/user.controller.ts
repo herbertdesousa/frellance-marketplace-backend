@@ -1,18 +1,18 @@
 import {
   Body,
-  ConflictException,
   Controller,
-  Get,
-  NotFoundException,
   Post,
   Put,
   Patch,
-  UnprocessableEntityException,
   ParseBoolPipe,
   Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { User, UserNotificationOnChatMessages } from '@prisma/client';
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
+
+import { ReqUserNameDTO } from './dto/req-user-name.dto';
+import { ReqUserNotificationOnChatMessage } from './dto/req-user-notification-on-chat-message.dto';
 
 import { EntireUser, UserService } from './user.service';
 
@@ -53,22 +53,33 @@ export class UserController {
   @Patch('name')
   async changeUserName(
     @Body('user') user: FirebaseUserDto,
-    @Query('name') newName: string,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query: ReqUserNameDTO,
   ): Promise<User> {
-    if (!newName)
-      throw new UnprocessableEntityException({ name: 'obrigatório' });
-
-    return await this.userService.changeUserName(user.uid, newName);
+    return await this.userService.changeUserName(user.uid, query.name);
   }
 
   @Put('user_notification_on_chat_messages')
   async toggleUserNotificationOnChatMessages(
     @Body('user') user: FirebaseUserDto,
-    @Query('value', ParseBoolPipe) value: boolean,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query: ReqUserNotificationOnChatMessage,
   ): Promise<UserNotificationOnChatMessages> {
     return await this.userService.toggleUserNotificationOnChatMessages(
       user.uid,
-      value,
+      !!query.value,
     );
   }
 }

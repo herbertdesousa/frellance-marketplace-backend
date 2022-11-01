@@ -29,9 +29,12 @@ import { ItemService } from './item.service';
 
 export interface FindAllPayload {
   limit?: number;
+  page?: number;
+  search?: string;
   order?: 'asc' | 'desc';
   selectMostView?: boolean;
   selectAddress?: boolean;
+  onHomeHero?: boolean;
   byCategoryId?: string;
 }
 
@@ -137,10 +140,10 @@ export class ItemController {
   }
 
   @Get()
-  async findAll(@Query() payload: FindAllPayload) {
+  async search(@Query() payload: FindAllPayload) {
     const finded = await this.itemService.findAll(payload);
 
-    return finded.map((item) => ({
+    const parsed = finded.map((item) => ({
       id: item.id,
       name: item.name,
       img: item.ItemPicture[0].url,
@@ -150,7 +153,13 @@ export class ItemController {
         [address.attributeValue.attribute.path.replace('address/', '')]:
           address.attributeValue.name,
       })).reduce((preview, current) => ({ ...preview, ...current })),
+      selectedOnHome: !!item.AdminItemHero.length,
     }));
+
+    const val = String(payload.onHomeHero) === 'true' ? true : false;
+    return payload.onHomeHero
+      ? parsed.filter((i) => i.selectedOnHome === val)
+      : parsed;
   }
 
   @Get('/details')

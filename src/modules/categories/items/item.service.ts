@@ -88,12 +88,28 @@ export class ItemService {
     })) as any;
   }
 
-  // : Promise<(Items & { itemPrice: ItemPrice })[]>
-  async findAll(payload: FindAllPayload) {
+  async findAll(filters: FindAllPayload) {
+    let pagination: { take: number; skip?: number } | undefined = undefined;
+
+    if (filters.limit) {
+      if (filters.page) {
+        pagination = {
+          take: Number(filters.limit),
+          skip: Number(filters.limit) * Number(filters.page),
+        };
+      } else {
+        pagination = { take: Number(filters.limit) };
+      }
+    }
+
     return await this.prisma.items.findMany({
-      ...(payload.limit ? { take: Number(payload.limit) } : {}),
+      ...(pagination || {}),
       where: {
-        ...(payload.byCategoryId ? { categoryId: payload.byCategoryId } : {}),
+        name: {
+          ...(filters.search ? { contains: filters.search } : {}),
+          mode: 'insensitive',
+        },
+        ...(filters.byCategoryId ? { categoryId: filters.byCategoryId } : {}),
       },
       include: {
         itemPrice: true,
@@ -114,12 +130,13 @@ export class ItemService {
             },
           },
         },
+        AdminItemHero: true,
       },
       orderBy: {
-        ...(payload.selectMostView
+        ...(filters.selectMostView
           ? { UserRecentsView: { _count: 'desc' } }
           : {}),
-        ...(payload.order ? { createdAt: payload.order } : {}),
+        ...(filters.order ? { createdAt: filters.order } : {}),
       },
     });
   }

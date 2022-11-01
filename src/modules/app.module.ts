@@ -14,15 +14,20 @@ import { ExistsOnTableRule } from 'src/common/validations/ExistsOnTable';
 import { UserModule } from './user/user.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AdminModule } from './admin/admin.module';
+
+import { AuthModule } from 'src/common/modules/auth/auth.module';
 import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDecodeFirebaseToken';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    AuthModule,
     PrismaModule,
     AnalyticsModule,
     UserModule,
     CategoriesModule,
+    AdminModule,
   ],
   controllers: [],
   providers: [ExistsOnTableRule],

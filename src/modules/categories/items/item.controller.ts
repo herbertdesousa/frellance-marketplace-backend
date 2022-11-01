@@ -237,8 +237,8 @@ export class ItemController {
     }>(user.uid, {
       ItemPicture: true,
       category: true,
-      AnalyticsRequestContact: { where: { userUid: user.uid } },
-      UserRecentsView: { where: { userUid: user.uid } },
+      AnalyticsRequestContact: true,
+      UserRecentsView: true,
     });
 
     return finded.map((i) => ({

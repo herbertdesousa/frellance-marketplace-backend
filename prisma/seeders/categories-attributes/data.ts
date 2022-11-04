@@ -348,6 +348,7 @@ export const categories: CategoriesData[] = [
       'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Fcars.webp?alt=media',
     slug: 'carros',
     iconName: 'FiCreditCard',
+    relevance: 1,
     attributes: [
       // general
       { path: 'general/condition', required: true, order: 1 },
@@ -376,6 +377,7 @@ export const categories: CategoriesData[] = [
       'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Freal-estates.webp?alt=media',
     slug: 'imoveis',
     iconName: 'FiHome',
+    relevance: 2,
     attributes: [
       // address
       { path: 'address/postal_code', required: true, order: 7 },
@@ -400,6 +402,7 @@ export const categories: CategoriesData[] = [
       'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Fwatches.webp?alt=media',
     slug: 'relogios',
     iconName: 'FiClock',
+    relevance: 0,
     attributes: [
       { path: 'general/condition', required: true, order: 1 },
       { path: 'general/year', required: true, order: 0 },
@@ -428,6 +431,7 @@ export const categories: CategoriesData[] = [
     img_url:
       'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Fnautical.webp?alt=media',
     slug: 'nauticos',
+    relevance: 0,
     iconName: 'FiAnchor',
     attributes: [
       { path: 'general/condition', required: true, order: 1 },
@@ -462,6 +466,7 @@ export const categories: CategoriesData[] = [
       'https://firebasestorage.googleapis.com/v0/b/frellance-marketplace.appspot.com/o/categories%2Faircrafts.webp?alt=media',
     slug: 'aeronaves',
     iconName: 'FiSend',
+    relevance: 0,
     attributes: [
       { path: 'general/condition', required: true, order: 1 },
       { path: 'general/year', required: true, order: 0 },

@@ -104,6 +104,7 @@ model Categories {
   slug      String   @unique
   iconName  String
   img_url   String
+  relevance Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -211,3 +211,13 @@ model AdminItemHero {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model AdminContacts {
+  id        String   @id() @default(uuid())
+  type      String   @unique
+  link      String
+  icon      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

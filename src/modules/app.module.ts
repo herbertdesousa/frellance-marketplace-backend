@@ -15,6 +15,7 @@ import { UserModule } from './user/user.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { AdminModule } from './admin/admin.module';
+import { ContactsModule } from './contacts/contacts.module';
 
 import { AuthModule } from 'src/common/modules/auth/auth.module';
 import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDecodeFirebaseToken';
@@ -28,6 +29,7 @@ import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDeco
     UserModule,
     CategoriesModule,
     AdminModule,
+    ContactsModule,
   ],
   controllers: [],
   providers: [ExistsOnTableRule],

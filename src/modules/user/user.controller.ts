@@ -4,21 +4,31 @@ import {
   Post,
   Put,
   Patch,
-  ParseBoolPipe,
   Query,
   ValidationPipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+
+import { FileInterceptor } from '@nestjs/platform-express';
 import { User, UserNotificationOnChatMessages } from '@prisma/client';
+
+import { UploadService } from 'src/common/modules/upload/upload.service';
+
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 
 import { ReqUserNameDTO } from './dto/req-user-name.dto';
 import { ReqUserNotificationOnChatMessage } from './dto/req-user-notification-on-chat-message.dto';
 
 import { EntireUser, UserService } from './user.service';
+import { fileInterceptorOptions } from 'src/common/helpers/fileInterceptorOptions';
 
 @Controller('users')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private uploadService: UploadService,
+  ) {}
 
   @Post()
   async auth(@Body('user') user: FirebaseUserDto): Promise<EntireUser> {
@@ -81,5 +91,27 @@ export class UserController {
       user.uid,
       !!query.value,
     );
+  }
+
+  @Post('picture')
+  @UseInterceptors(
+    FileInterceptor(
+      'picture',
+      fileInterceptorOptions({ fileSize: 2e9, mimes: /\.(jpg|jpeg|png)$/ }),
+    ),
+  )
+  async uploadFile(
+    @Query('user') user: FirebaseUserDto,
+    @UploadedFile() picture: Express.Multer.File,
+  ): Promise<User> {
+    const currentUser = await this.userService.findUserByUid(user.uid);
+
+    const url = await this.uploadService.uploadPicture({
+      picture,
+      oldFirebasePath: currentUser.picture,
+      resize: { height: 96, width: 96 },
+    });
+
+    return await this.userService.updatePicture(user.uid, url);
   }
 }

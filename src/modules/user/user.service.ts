@@ -81,4 +81,11 @@ export class UserService {
       data: { value },
     });
   }
+
+  async updatePicture(uid: string, url: string): Promise<User> {
+    return await this.prisma.user.update({
+      where: { uid },
+      data: { picture: url },
+    });
+  }
 }

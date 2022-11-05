@@ -10,6 +10,7 @@ export class OptionalDecodeFirebaseToken implements NestMiddleware {
 
     if (!token) return next();
 
+    Object.assign(req.query, { user: await tokenDecoder(token) });
     Object.assign(req.body, { user: await tokenDecoder(token) });
 
     return next();

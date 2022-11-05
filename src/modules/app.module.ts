@@ -17,14 +17,14 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { AdminModule } from './admin/admin.module';
 import { ContactsModule } from './contacts/contacts.module';
 
-import { AuthModule } from 'src/common/modules/auth/auth.module';
+import { SharedAppModule } from 'src/common/modules/shared-app.module';
 import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDecodeFirebaseToken';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    AuthModule,
     PrismaModule,
+    SharedAppModule,
     AnalyticsModule,
     UserModule,
     CategoriesModule,
@@ -53,6 +53,10 @@ export class AppModule implements NestModule {
       },
       {
         path: '/users/name',
+        method: RequestMethod.ALL,
+      },
+      {
+        path: '/users/picture',
         method: RequestMethod.ALL,
       },
       {

@@ -79,7 +79,6 @@ export class ItemController {
             mimetype: img.mimeType,
             uploadpath: `items/${fileName}`,
           },
-          resize: { height: 96, width: 96 },
         });
 
         uploadedImgsUrls.push({ name: fileName, url });

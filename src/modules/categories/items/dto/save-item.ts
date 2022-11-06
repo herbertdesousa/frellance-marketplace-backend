@@ -1,14 +1,22 @@
-import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, MinLength, ValidateNested } from 'class-validator';
+import { plainToClass, Transform, Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsNotEmpty,
+  MinLength,
+  ValidateNested,
+  ArrayMaxSize,
+  ArrayMinSize,
+} from 'class-validator';
+
+import {
+  HasMimeType,
+  IsFiles,
+  MaxFileSize,
+  MemoryStoredFile,
+  FileSystemStoredFile,
+} from 'nestjs-form-data';
+
 import { ExistsOnTable } from 'src/common/validations/ExistsOnTable';
-
-class SaveItemImg {
-  @IsNotEmpty({ message: 'obrigatório' })
-  name: string;
-
-  @IsNotEmpty({ message: 'obrigatório' })
-  url: string;
-}
 
 class SaveItemAttributes {
   @IsNotEmpty({ message: 'obrigatório' })
@@ -41,16 +49,29 @@ export class SaveItemDto {
   category_id: string;
 
   @IsNotEmpty({ message: 'obrigatório' })
+  @Transform((price) => plainToClass(SaveItemPrice, JSON.parse(price.value)))
   @ValidateNested({ each: true })
   @Type(() => SaveItemPrice)
   price: SaveItemPrice;
 
   @IsNotEmpty({ message: 'obrigatório' })
+  @IsFiles()
+  @MaxFileSize(1e6, {
+    each: true,
+  })
+  @HasMimeType(['image/jpeg', 'image/png', 'image/jpg', 'image/webp'], {
+    each: true,
+  })
   @ValidateNested({ each: true })
-  @Type(() => SaveItemImg)
-  imgs: SaveItemImg[];
+  @ArrayMaxSize(20, { message: 'inválido' })
+  @ArrayMinSize(5, { message: 'inválido' })
+  imgs: FileSystemStoredFile[];
 
   @IsNotEmpty({ message: 'obrigatório' })
+  @Transform((attr) => {
+    attr.value.map((i) => plainToClass(SaveItemPrice, JSON.parse(i)));
+    return attr;
+  })
   @ValidateNested({ each: true })
   @Type(() => SaveItemAttributes)
   attributes: SaveItemAttributes[];

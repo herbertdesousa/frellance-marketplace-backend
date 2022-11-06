@@ -7,13 +7,17 @@ import { SaveItemDto } from './dto/save-item';
 
 import { FindAllPayload } from './item.controller';
 
+type CreatePayload = Omit<SaveItemDto, 'imgs'> & {
+  imgs: { url: string; name: string }[];
+};
+
 @Injectable()
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
   async create(
     userId: string,
-    payload: SaveItemDto,
+    payload: CreatePayload,
     attributesValuesId: string[],
   ): Promise<Items> {
     return await this.prisma.items.create({

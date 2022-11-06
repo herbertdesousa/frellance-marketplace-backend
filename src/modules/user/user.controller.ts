@@ -6,12 +6,12 @@ import {
   Patch,
   Query,
   ValidationPipe,
-  UseInterceptors,
-  UploadedFile,
 } from '@nestjs/common';
 
-import { FileInterceptor } from '@nestjs/platform-express';
 import { User, UserNotificationOnChatMessages } from '@prisma/client';
+import { v4 } from 'uuid';
+
+import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 
 import { UploadService } from 'src/common/modules/upload/upload.service';
 
@@ -21,7 +21,7 @@ import { ReqUserNameDTO } from './dto/req-user-name.dto';
 import { ReqUserNotificationOnChatMessage } from './dto/req-user-notification-on-chat-message.dto';
 
 import { EntireUser, UserService } from './user.service';
-import { fileInterceptorOptions } from 'src/common/helpers/fileInterceptorOptions';
+import { ReqUploadPictureDto } from './dto/req-upload-picture.dto';
 
 @Controller('users')
 export class UserController {
@@ -94,21 +94,23 @@ export class UserController {
   }
 
   @Post('picture')
-  @UseInterceptors(
-    FileInterceptor(
-      'picture',
-      fileInterceptorOptions({ fileSize: 2e9, mimes: /\.(jpg|jpeg|png)$/ }),
-    ),
-  )
+  @FormDataRequest({ storage: FileSystemStoredFile })
   async uploadFile(
     @Query('user') user: FirebaseUserDto,
-    @UploadedFile() picture: Express.Multer.File,
+    @Body('picture') picture: ReqUploadPictureDto['picture'],
   ): Promise<User> {
     const currentUser = await this.userService.findUserByUid(user.uid);
 
+    if (currentUser.picture.includes('firebasestorage.googleapis.com')) {
+      await this.uploadService.deletePicture(currentUser.picture);
+    }
+
     const url = await this.uploadService.uploadPicture({
-      picture,
-      oldFirebasePath: currentUser.picture,
+      picture: {
+        localpath: picture.path,
+        uploadpath: `users/${v4()}`,
+        mimetype: picture.mimetype,
+      },
       resize: { height: 96, width: 96 },
     });
 

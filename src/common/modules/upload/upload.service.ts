@@ -8,8 +8,11 @@ import * as firebaseStorage from 'firebase/storage';
 import firebaseConfig from 'src/config/firebase-config';
 
 interface UploadFileRequest {
-  picture: Express.Multer.File;
-  oldFirebasePath: string;
+  picture: {
+    localpath: string;
+    uploadpath: string;
+    mimetype: string;
+  };
   resize?: {
     height: number;
     width: number;
@@ -32,34 +35,21 @@ function getPathStorageFromUrl(url: string) {
 
 @Injectable()
 export class UploadService {
-  async uploadPicture({
-    picture,
-    oldFirebasePath,
-    resize,
-  }: UploadFileRequest): Promise<string> {
-    // delete old image
-    if (oldFirebasePath.includes('firebasestorage.googleapis.com')) {
-      const imageRef = firebaseStorage.ref(
-        firebaseConfig.client.storage,
-        getPathStorageFromUrl(oldFirebasePath),
-      );
-      await firebaseStorage.deleteObject(imageRef);
-    }
-
+  async uploadPicture({ picture, resize }: UploadFileRequest): Promise<string> {
     // read file from temp
-    const buffer = fs.readFileSync(picture.path);
+    const buffer = fs.readFileSync(picture.localpath);
 
     // process image
     const img = sharp(buffer);
     if (resize) img.resize(resize.width, resize.height);
-    await img.webp({ quality: 80 }).toFile(picture.path);
+    await img.webp({ quality: 80 }).toFile(picture.localpath);
 
-    const processedBuffer = fs.readFileSync(picture.path);
+    const processedBuffer = fs.readFileSync(picture.localpath);
 
     // upload to firebase
     const imageRef = firebaseStorage.ref(
       firebaseConfig.client.storage,
-      `users/${picture.filename}`,
+      picture.uploadpath,
     );
     const snapshot = await firebaseStorage.uploadBytes(
       imageRef,
@@ -68,8 +58,16 @@ export class UploadService {
     );
 
     // unlink temp
-    fs.unlinkSync(path.resolve('temp', picture.filename));
+    // fs.unlinkSync(path.resolve('temp', picture.filename));
 
     return await firebaseStorage.getDownloadURL(snapshot.ref);
+  }
+
+  async deletePicture(url: string) {
+    const imageRef = firebaseStorage.ref(
+      firebaseConfig.client.storage,
+      getPathStorageFromUrl(url),
+    );
+    await firebaseStorage.deleteObject(imageRef);
   }
 }

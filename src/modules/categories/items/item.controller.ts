@@ -7,6 +7,8 @@ import {
   Post,
   Query,
   UnprocessableEntityException,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   Categories,
@@ -20,8 +22,15 @@ import {
   UserRecentsView,
 } from '@prisma/client';
 
+import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
+import { FilesInterceptor } from '@nestjs/platform-express';
+
+import { v4 } from 'uuid';
+
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 import { SaveItemDto } from './dto/save-item';
+
+import { UploadService } from 'src/common/modules/upload/upload.service';
 
 import firebaseAdmin from 'src/config/firebase-config';
 
@@ -40,13 +49,43 @@ export interface FindAllPayload {
 
 @Controller('/categories/items')
 export class ItemController {
-  constructor(private itemService: ItemService) {}
+  constructor(
+    private itemService: ItemService,
+    private uploadService: UploadService,
+  ) {}
 
   @Post()
+  @FormDataRequest({ storage: FileSystemStoredFile })
   async create(
-    @Body('user') user: FirebaseUserDto,
+    @Query('user') user: FirebaseUserDto,
     @Body() data: SaveItemDto,
   ): Promise<Items> {
+    // parse JSONs
+    data = {
+      ...data,
+      price: JSON.parse(String(data.price)),
+      attributes: data.attributes.map((attr) => JSON.parse(String(attr))),
+    };
+
+    // upload pictures
+    const uploadedImgsUrls: { url: string; name: string }[] = [];
+    await Promise.all(
+      data.imgs.map(async (img) => {
+        const fileName = v4();
+
+        const url = await this.uploadService.uploadPicture({
+          picture: {
+            localpath: img.path,
+            mimetype: img.mimeType,
+            uploadpath: `items/${fileName}`,
+          },
+          resize: { height: 96, width: 96 },
+        });
+
+        uploadedImgsUrls.push({ name: fileName, url });
+      }),
+    );
+
     const attributes = await this.itemService.findAttributesByCategoryId(
       data.category_id,
     );
@@ -112,7 +151,7 @@ export class ItemController {
 
     return await this.itemService.create(
       user.uid,
-      data,
+      { ...data, imgs: uploadedImgsUrls },
       itemAttributesValuesId,
     );
   }

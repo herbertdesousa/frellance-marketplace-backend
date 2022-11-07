@@ -7,4 +7,4 @@ import { ConfigModule } from '@nestjs/config';
   imports: [PassportModule, ConfigModule],
   providers: [BasicStrategy],
 })
-export class AuthModule {}
+export class BasicAuthModule {}

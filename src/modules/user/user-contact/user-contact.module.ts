@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 
+import { AnalyticsModule } from 'src/common/modules/analytics/analytics.module';
+
 import { UserContactController } from './user-contact.controller';
 import { UserContactService } from './user-contact.service';
 
 @Module({
-  imports: [],
+  imports: [AnalyticsModule],
   controllers: [UserContactController],
   providers: [UserContactService],
 })

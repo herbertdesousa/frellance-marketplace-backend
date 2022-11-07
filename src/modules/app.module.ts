@@ -14,7 +14,6 @@ import { ExistsOnTableRule } from 'src/common/validations/ExistsOnTable';
 
 import { UserModule } from './user/user.module';
 import { CategoriesModule } from './categories/categories.module';
-import { AnalyticsModule } from './analytics/analytics.module';
 import { AdminModule } from './admin/admin.module';
 import { ContactsModule } from './contacts/contacts.module';
 
@@ -26,7 +25,6 @@ import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDeco
     ConfigModule.forRoot(),
     PrismaModule,
     SharedAppModule,
-    AnalyticsModule,
     UserModule,
     CategoriesModule,
     AdminModule,

@@ -187,13 +187,13 @@ export class ItemController {
       img: item.ItemPicture[0].url,
       description: item.description,
       price: item.itemPrice.value,
+      selectedOnHome: !!item.AdminItemHero.length,
     }));
 
-    return parsed;
-    // const val = String(payload.onHomeHero) === 'true' ? true : false;
-    // return payload.onHomeHero
-    //   ? parsed.filter((i) => i.selectedOnHome === val)
-    //   : parsed;
+    const val = String(payload.onHomeHero) === 'true' ? true : false;
+    return payload.onHomeHero
+      ? parsed.filter((i) => i.selectedOnHome === val)
+      : parsed;
   }
 
   @Get('/details')

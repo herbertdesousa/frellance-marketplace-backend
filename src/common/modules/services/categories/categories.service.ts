@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from 'src/common/services/prisma/prisma.service';
-import { ReqCreateCategory } from './dto/req-create-category';
+import { PrismaService } from 'src/common/modules/config/prisma/prisma.service';
+import { ReqCreateCategory } from 'src/dtos/modules/categories/req-create-category';
 
 type ReqSavePayload = Omit<ReqCreateCategory, 'img'> & { img_url: string };
 
@@ -46,5 +46,17 @@ export class CategoriesService {
     return await this.prisma.items.count({
       where: { categoryId: id },
     });
+  }
+
+  async findById(id: string) {
+    return await this.prisma.categories.findFirst({ where: { id } });
+  }
+
+  async findAll() {
+    return await this.prisma.categories.findMany();
+  }
+
+  async findOneBySlug(slug: string) {
+    return await this.prisma.categories.findFirst({ where: { slug } });
   }
 }

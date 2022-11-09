@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { AttributeValues, Items, Prisma, UserFavorites } from '@prisma/client';
-import { PrismaService } from 'src/common/services/prisma/prisma.service';
+import { PrismaService } from 'src/common/modules/config/prisma/prisma.service';
 
 import { SaveItemDto } from './dto/save-item';
 
@@ -54,17 +54,6 @@ export class ItemService {
   ): Promise<AttributeValues> {
     return await this.prisma.attributeValues.create({
       data: { attributesId, name },
-    });
-  }
-
-  async findAttributesByCategoryId(categoryId: string) {
-    return await this.prisma.categoryAttribute.findMany({
-      where: { categoryId },
-      include: {
-        attribute: {
-          include: { AttributeValues: true },
-        },
-      },
     });
   }
 

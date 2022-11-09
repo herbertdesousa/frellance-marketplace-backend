@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 
 import { BasicAuthModule } from './basic-auth/basic-auth.module';
 import { UploadModule } from './upload/upload.module';
-import { AnalyticsModule } from './analytics/analytics.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [BasicAuthModule, UploadModule, AnalyticsModule],
+  imports: [BasicAuthModule, UploadModule, PrismaModule],
   providers: [],
 })
-export class SharedAppModule {}
+export class CommonConfigModule {}

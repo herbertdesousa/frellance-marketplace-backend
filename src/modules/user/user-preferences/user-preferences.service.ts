@@ -7,7 +7,7 @@ import {
   UserFavorites,
   UserRecentsView,
 } from '@prisma/client';
-import { PrismaService } from 'src/common/services/prisma/prisma.service';
+import { PrismaService } from 'src/common/modules/config/prisma/prisma.service';
 
 type FindFavorites = (UserFavorites & {
   itemId: Items & {

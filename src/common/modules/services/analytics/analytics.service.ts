@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { AnalyticsRequestContact, Items } from '@prisma/client';
-import { PrismaService } from 'src/common/services/prisma/prisma.service';
+import { PrismaService } from 'src/common/modules/config/prisma/prisma.service';
 
 @Injectable()
 export class AnalyticsService {
@@ -27,19 +27,4 @@ export class AnalyticsService {
   async findItemById(id: string): Promise<Items> {
     return this.prisma.items.findFirst({ where: { id } });
   }
-
-  // async createItemView(
-  //   userUid: string,
-  //   itemsId: string,
-  // ): Promise<AnalyticsItemView> {
-  //   return await this.prisma.analyticsItemView.create({
-  //     data: { userUid, itemsId },
-  //   });
-  // }
-
-  // async findAllItemViewFromUserId(id: string): Promise<AnalyticsItemView[]> {
-  //   return await this.prisma.analyticsItemView.findMany({
-  //     where: { userUid: id },
-  //   });
-  // }
 }

@@ -12,18 +12,16 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 
-import { CategoriesService } from './categories.service';
-import { CategoriesService as ClientCategoriesService } from 'src/modules/categories/categories.service';
+import { UploadService } from 'src/common/modules/config/upload/upload.service';
 
-import { UploadService } from 'src/common/modules/upload/upload.service';
-import { ReqCreateCategory } from './dto/req-create-category';
-import { ReqUpdateCategory } from './dto/req-update-category';
+import { CategoriesService } from 'src/common/modules/services/categories/categories.service';
+import { ReqCreateCategory } from 'src/dtos/modules/categories/req-create-category';
+import { ReqUpdateCategory } from 'src/dtos/modules/categories/req-update-category';
 
 @Controller('admin/categories')
 export class CategoriesController {
   constructor(
     private categoriesService: CategoriesService,
-    private clientCategoriesService: ClientCategoriesService,
     private uploadService: UploadService,
   ) {}
 
@@ -91,7 +89,7 @@ export class CategoriesController {
 
   @Get()
   async listAll() {
-    const all = await this.clientCategoriesService.findAll();
+    const all = await this.categoriesService.findAll();
 
     return await Promise.all(
       all.map(async (category) => {

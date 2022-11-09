@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { AdminContacts } from '@prisma/client';
 
-import { PrismaService } from 'src/common/services/prisma/prisma.service';
+import { AdminContacts } from '@prisma/client';
+import { PrismaService } from 'src/common/modules/config/prisma/prisma.service';
+
 import { SaveAdminContact } from './dto/save-admin-contact';
 
 @Injectable()
-export class ContactsService {
+export class AdminContactService {
   constructor(private prisma: PrismaService) {}
 
   async update(payload: SaveAdminContact): Promise<AdminContacts> {
@@ -13,5 +14,9 @@ export class ContactsService {
       where: { id: payload.id },
       data: { active: payload.active, link: payload.link },
     });
+  }
+
+  async findAll(): Promise<AdminContacts[]> {
+    return await this.prisma.adminContacts.findMany();
   }
 }

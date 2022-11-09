@@ -13,7 +13,7 @@ import { v4 } from 'uuid';
 
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 
-import { UploadService } from 'src/common/modules/upload/upload.service';
+import { UploadService } from 'src/common/modules/config/upload/upload.service';
 
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 

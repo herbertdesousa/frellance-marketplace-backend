@@ -6,13 +6,17 @@ import {
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
-import { Categories } from '@prisma/client';
+import { Attributes, AttributeValues, Categories } from '@prisma/client';
 
-import { CategoriesService } from './categories.service';
+import { CategoriesAttributesService } from 'src/common/modules/services/categories-attributes/categories-attributes.service';
+import { CategoriesService } from 'src/common/modules/services/categories/categories.service';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private categoriesService: CategoriesService) {}
+  constructor(
+    private categoriesService: CategoriesService,
+    private categoriesAttributesService: CategoriesAttributesService,
+  ) {}
 
   @Get()
   async listAll(): Promise<Categories[]> {
@@ -24,7 +28,11 @@ export class CategoriesController {
     if (!(await this.categoriesService.findById(id)))
       throw new NotFoundException({ message: 'categoria não encontrada' });
 
-    const result = await this.categoriesService.findAttributes(id);
+    const result = await this.categoriesAttributesService.findByCategoryId<{
+      attribute: Attributes & { AttributeValues: AttributeValues[] };
+    }>(id, {
+      attribute: { include: { AttributeValues: { where: { default: true } } } },
+    });
 
     return await Promise.all(
       result.map(async (item) => ({

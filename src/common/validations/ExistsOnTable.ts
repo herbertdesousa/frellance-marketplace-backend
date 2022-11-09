@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../services/prisma/prisma.service';
+import { PrismaService } from '../modules/config/prisma/prisma.service';
 
 interface IRequest {
   table: string;

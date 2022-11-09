@@ -6,7 +6,7 @@ import {
   UserContacts,
   UserNotificationOnChatMessages,
 } from '@prisma/client';
-import { PrismaService } from 'src/common/services/prisma/prisma.service';
+import { PrismaService } from 'src/common/modules/config/prisma/prisma.service';
 
 export interface EntireUser extends User {
   contacts: UserContacts[];

@@ -379,6 +379,9 @@ export const categories: CategoriesData[] = [
     iconName: 'FiHome',
     relevance: 2,
     attributes: [
+      // general
+      { path: 'general/condition', required: true, order: 1 },
+      { path: 'general/year', required: true, order: 0 },
       // address
       { path: 'address/postal_code', required: true, order: 7 },
       { path: 'address/number', required: true, order: 6 },

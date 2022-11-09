@@ -7,8 +7,6 @@ import {
   Post,
   Query,
   UnprocessableEntityException,
-  UploadedFiles,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   Categories,
@@ -23,14 +21,14 @@ import {
 } from '@prisma/client';
 
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
-import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { v4 } from 'uuid';
 
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 import { SaveItemDto } from './dto/save-item';
 
-import { UploadService } from 'src/common/modules/upload/upload.service';
+import { UploadService } from 'src/common/modules/config/upload/upload.service';
+import { CategoriesAttributesService } from 'src/common/modules/services/categories-attributes/categories-attributes.service';
 
 import firebaseAdmin from 'src/config/firebase-config';
 
@@ -51,6 +49,7 @@ export interface FindAllPayload {
 export class ItemController {
   constructor(
     private itemService: ItemService,
+    private categoriesAttributesService: CategoriesAttributesService,
     private uploadService: UploadService,
   ) {}
 
@@ -85,9 +84,10 @@ export class ItemController {
       }),
     );
 
-    const attributes = await this.itemService.findAttributesByCategoryId(
-      data.category_id,
-    );
+    const attributes = await this.categoriesAttributesService.findByCategoryId<{
+      attribute: Attributes & { AttributeValues: AttributeValues[] };
+    }>(data.category_id, { attribute: { include: { AttributeValues: true } } });
+
     const currentAttributesIds = data.attributes.map((item) => item.id);
     const attributesId = attributes.map((item) => item.attributesId);
 

@@ -13,7 +13,7 @@ import {
 import { UserContacts } from '@prisma/client';
 import { FirebaseUserDto } from 'src/dtos/firebase-user.dto';
 
-import { AnalyticsService } from 'src/common/modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/common/modules/services/analytics/analytics.service';
 import { ReqListAllFromItemDTO } from './dto/req-list-all-from-item.dto';
 import { SaveUserContactDto } from './dto/save-user-contact';
 import { UserContactService } from './user-contact.service';

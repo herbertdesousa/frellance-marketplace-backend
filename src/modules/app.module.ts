@@ -8,7 +8,6 @@ import {
 
 import { ConfigModule } from '@nestjs/config';
 
-import { PrismaModule } from 'src/common/services/prisma/prisma.module';
 import { DecodeFirebaseTokenMiddleware } from 'src/common/middlewares/DecodeFirebaseToken';
 
 import { ValidatorModule } from 'src/common/validations/validators.module';
@@ -18,15 +17,14 @@ import { CategoriesModule } from './categories/categories.module';
 import { AdminModule } from './admin/admin.module';
 import { ContactsModule } from './contacts/contacts.module';
 
-import { SharedAppModule } from 'src/common/modules/shared-app.module';
+import { CommonModule } from 'src/common/modules/common.module';
 import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDecodeFirebaseToken';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ValidatorModule,
-    PrismaModule,
-    SharedAppModule,
+    CommonModule,
     UserModule,
     CategoriesModule,
     AdminModule,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AdminItemHero } from '@prisma/client';
 
-import { PrismaService } from 'src/common/services/prisma/prisma.service';
+import { PrismaService } from 'src/common/modules/config/prisma/prisma.service';
 
 @Injectable()
 export class ItemHeroService {

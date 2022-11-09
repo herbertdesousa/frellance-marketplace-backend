@@ -13,6 +13,7 @@ export type AttributesPaths =
   | 'address/complement'
   | 'address/neighborhood'
   // cars
+  | 'cars/condition'
   | 'cars/fuel_type'
   | 'cars/mileage'
   | 'cars/cylinders_qty'

@@ -10,7 +10,8 @@ import { ConfigModule } from '@nestjs/config';
 
 import { PrismaModule } from 'src/common/services/prisma/prisma.module';
 import { DecodeFirebaseTokenMiddleware } from 'src/common/middlewares/DecodeFirebaseToken';
-import { ExistsOnTableRule } from 'src/common/validations/ExistsOnTable';
+
+import { ValidatorModule } from 'src/common/validations/validators.module';
 
 import { UserModule } from './user/user.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -23,6 +24,7 @@ import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDeco
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ValidatorModule,
     PrismaModule,
     SharedAppModule,
     UserModule,
@@ -31,7 +33,7 @@ import { OptionalDecodeFirebaseToken } from 'src/common/middlewares/OptionalDeco
     ContactsModule,
   ],
   controllers: [],
-  providers: [ExistsOnTableRule],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

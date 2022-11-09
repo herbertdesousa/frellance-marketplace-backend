@@ -26,13 +26,6 @@ async function main() {
       data: {
         name: attributes[i].name,
         type: attributes[i].type,
-        path: attributes[i].path,
-        refAttributeClass: {
-          connectOrCreate: {
-            create: { name: attributes[i].class },
-            where: { name: attributes[i].class },
-          },
-        },
         AttributeValues: {
           createMany: {
             data: uptAttributes.val,

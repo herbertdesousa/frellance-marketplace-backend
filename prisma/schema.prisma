@@ -113,26 +113,15 @@ model Categories {
 }
 
 model Attributes {
-  id                    String             @id() @default(uuid())
-  name                  String
-  description           String?
-  path                  String?
-  type                  AttributesType
-  refAttributeClass     RefAttributeClass? @relation(fields: [refAttributeClassName], references: [name], onDelete: SetNull)
-  refAttributeClassName String?
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  id          String         @id() @default(uuid())
+  name        String
+  description String?
+  type        AttributesType
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
   AttributeValues   AttributeValues[]
   CategoryAttribute CategoryAttribute[]
-}
-
-model RefAttributeClass {
-  name      String   @id() @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Attributes Attributes[]
 }
 
 enum AttributesType {

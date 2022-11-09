@@ -108,13 +108,6 @@ export class ItemService {
         itemPrice: true,
         ItemPicture: true,
         ItemAttributeValues: {
-          where: {
-            attributeValue: {
-              attribute: {
-                path: { in: ['address/state', 'address/city'] },
-              },
-            },
-          },
           include: {
             attributeValue: {
               include: {

@@ -187,17 +187,13 @@ export class ItemController {
       img: item.ItemPicture[0].url,
       description: item.description,
       price: item.itemPrice.value,
-      address: item.ItemAttributeValues.map((address) => ({
-        [address.attributeValue.attribute.path.replace('address/', '')]:
-          address.attributeValue.name,
-      })).reduce((preview, current) => ({ ...preview, ...current })),
-      selectedOnHome: !!item.AdminItemHero.length,
     }));
 
-    const val = String(payload.onHomeHero) === 'true' ? true : false;
-    return payload.onHomeHero
-      ? parsed.filter((i) => i.selectedOnHome === val)
-      : parsed;
+    return parsed;
+    // const val = String(payload.onHomeHero) === 'true' ? true : false;
+    // return payload.onHomeHero
+    //   ? parsed.filter((i) => i.selectedOnHome === val)
+    //   : parsed;
   }
 
   @Get('/details')
@@ -230,9 +226,7 @@ export class ItemController {
         attributes: finded.ItemAttributeValues.map((item) => ({
           id: item.attributeValue.attribute.id,
           name: item.attributeValue.attribute.name,
-          path: item.attributeValue.attribute.path,
           description: item.attributeValue.attribute.description || '',
-          class: item.attributeValue.attribute.refAttributeClassName,
           value: item.attributeValue.name,
         })),
         description: finded.description,

@@ -34,15 +34,16 @@ export class CategoriesController {
       attribute: { include: { AttributeValues: { where: { default: true } } } },
     });
 
+    console.log(result);
+
     return await Promise.all(
       result.map(async (item) => ({
-        attributes_id: item.attribute.id,
+        id: item.attribute.id,
         required: item.required,
         order: item.order,
         name: item.attribute.name,
         description: item.attribute.description || '',
         type: item.attribute.type,
-        class: item.attribute.refAttributeClassName,
         values: item.attribute.AttributeValues,
       })),
     );
